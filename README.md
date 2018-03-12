@@ -7,3 +7,22 @@ Are you so busy that you forget to switch your laundry around?  Do you find your
 * Use a MetaWear sensor to detect when the washing machine starts, stops, and is unloaded
 * Connect to a mobile app with the capability to send text message reminders
 * Send text messages when the washing machine is finished running and follow-ups if the laundry is not unloaded
+
+## User stories
+As a **standard user**, I want to **see the machine status** so I can **see if the machine is running, stopped, or already unloaded**.  
+**Acceptance Criteria:**
+* App connects to sensor and streams data
+* App is able to interpret data to determine the machine status
+* App displays the machine status
+
+As a **standard user**, I want to **receive status notifications** so I can **know when to unload the laundry**.  
+**Acceptance Criteria:**
+* App connects to sensor and streams data
+* App is able to interpret data to determine the machine status
+* App is able to send a text message notification when the status changes from running to stopped
+
+As a **standard user**, I want to **receive status notifications** so I can **be reminded if I forgot to unload the laundry**.  
+**Acceptance Criteria:**
+* App connects to sensor and streams data
+* App continues to check machine status to determine when it has been unloaded
+* App is able to send a text message notification at a defined interval until the machine is unloaded
