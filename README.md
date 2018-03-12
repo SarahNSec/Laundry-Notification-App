@@ -67,7 +67,7 @@ IFTT is used to send the text message notifications to each user.  It is initiat
 
 ## Security analysis
 Text describing high level diagram with red or other callouts identifying problem points or attacks.
-![Security Ananlysis Diagram](./path-to-image-file.imgextension)
+![Security Diagram](./Laundry_Notification_App_Components_w_Security.png)
 
 | Component name | Category of vulnerability | Issue Description | Mitigation |
 |----------------|---------------------------|-------------------|------------|
