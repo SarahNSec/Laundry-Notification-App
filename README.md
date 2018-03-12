@@ -64,3 +64,12 @@ The mobile device is a subset of the standard user.  That is, every user configu
 
 ### If This Then That (IFTT) [Software]
 IFTT is used to send the text message notifications to each user.  It is initiated by the application via the user's IFTT API key.
+
+## Security analysis
+Text describing high level diagram with red or other callouts identifying problem points or attacks.
+![Security Ananlysis Diagram](./path-to-image-file.imgextension)
+
+| Component name | Category of vulnerability | Issue Description | Mitigation |
+|----------------|---------------------------|-------------------|------------|
+| MetaWear Device API Connector | Unauthorized Access | This component exposes an interface to the MetaWear device API that could be exploited to manipulate the data that is sent to the app | The connector should be implemented securely in line with MBient Lab's best practices.|
+| IFTT API Connector | Unauthorized Access | This component exposes an interface to If This Then That, which allows sending notifications to the user, and can be exploited to send notifications to a misuser via bad user input. | The API keys should be stored securely using the native settings interface with all user input properly sanitized to ensure that the API connector cannot be misused. |
