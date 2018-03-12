@@ -35,4 +35,4 @@ As a **laundry notification app misuser**, I want to **exploit the application**
 
 As a **laundry notification app misuser**, I want to **exploit the text message notification feature** so I can **notify unauthorized individuals of the status**.  
 **Mitigations:**  
-* Text message notification engine is implemented securely
+* Text message notification engine (using If This Then That) securely connects to the If This Then That API to ensure notifications can not be redirected.
