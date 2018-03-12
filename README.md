@@ -48,16 +48,16 @@ The MetaWear sensor attaches to the washing machine and data is collected to det
 The Laundry Notification app collects the data from the MetaWear sensor, analyzes the data to determine the machine status, and when necessary, initiates the text message notification.  It can be run on any Android device that is primarily kept at home (e.g. an Android tablet kept at home).
 
 #### MetaWear API Connector
-The app connects to the sensor via the MetaWear API.  e home where the This connector drives the requirement that the device running the application be kept in the washing machine is.
+The app connects to the sensor via the MetaWear API.  This connector drives the requirement that the device running the application be kept in home where the the washing machine is located.
 
 #### If This Then That (IFTT) API Connector
 The Application initiates the text message notification by connecting to the (IFTT) API.  Via this connector, the app crafts the text message and sends it to the user's mobile device.
 
 ### Home-based Android Device [Hardware]
-The application is designed to run on an Android device.  This device should remain in the same home as the washing machine in order for the app to connect to the MetaWear device.
+The application is designed to run on an Android device.  This device should remain in the same home as the washing machine in order for the app to connect to the MetaWear device.  This device also requires a wifi connection to connect to the IFTT API.
 
 ### Mobile Device [Hardware]
-The mobile device is a subset of the standard user.  That is, every user configured within the app must have a mobile device to receive text message notifications.
+The mobile device is a subset of the standard user.  That is, every user configured within the app must have a mobile device to receive text message notifications.  This device is where the text message notifications are received.  Because this is done over SMS, this device can be located anywhere.
 
 ### If This Then That (IFTT) [Software]
-IFTT is used to send the text message notifications to each user.  It is initiated by the application.
+IFTT is used to send the text message notifications to each user.  It is initiated by the application via the user's IFTT API key.
