@@ -38,4 +38,4 @@ As a **laundry notification app misuser**, I want to **exploit the text message 
 * Text message notification engine (using If This Then That) securely connects to the If This Then That API to ensure notifications can not be redirected.
 
 ## High Level Design
-![Laundry Notification App Components Diagram](Laundry-Notification-App/Laundry Notification App Components.png)
+![Laundry Notification App Components Diagram](./Laundry_Notification_App_Components.png)
