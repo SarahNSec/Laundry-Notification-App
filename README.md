@@ -53,6 +53,9 @@ The app connects to the sensor via the MetaWear API.  This connector drives the 
 #### If This Then That (IFTT) API Connector
 The Application initiates the text message notification by connecting to the (IFTT) API.  Via this connector, the app crafts the text message and sends it to the user's mobile device.
 
+#### User Settings
+A subcomponent of the app allows for configuring users.  Each user must have an IFTT API key to interact with an applet that allows sending text messages.
+
 ### Home-based Android Device [Hardware]
 The application is designed to run on an Android device.  This device should remain in the same home as the washing machine in order for the app to connect to the MetaWear device.  This device also requires a wifi connection to connect to the IFTT API.
 
