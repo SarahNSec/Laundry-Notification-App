@@ -39,3 +39,25 @@ As a **laundry notification app misuser**, I want to **exploit the text message 
 
 ## High Level Design
 ![Laundry Notification App Components Diagram](./Laundry_Notification_App_Components.png)
+
+## Component List
+### MetaWear Sensor [Hardware]
+The MetaWear sensor attaches to the washing machine and data is collected to determine the machine status. The accelerometer sensor within the MetaWear device is the primary method of gathering this data.
+
+### Laundry Notification App [Software]
+The Laundry Notification app collects the data from the MetaWear sensor, analyzes the data to determine the machine status, and when necessary, initiates the text message notification.  It can be run on any Android device that is primarily kept at home (e.g. an Android tablet kept at home).
+
+#### MetaWear API Connector
+The app connects to the sensor via the MetaWear API.  e home where the This connector drives the requirement that the device running the application be kept in the washing machine is.
+
+#### If This Then That (IFTT) API Connector
+The Application initiates the text message notification by connecting to the (IFTT) API.  Via this connector, the app crafts the text message and sends it to the user's mobile device.
+
+### Home-based Android Device [Hardware]
+The application is designed to run on an Android device.  This device should remain in the same home as the washing machine in order for the app to connect to the MetaWear device.
+
+### Mobile Device [Hardware]
+The mobile device is a subset of the standard user.  That is, every user configured within the app must have a mobile device to receive text message notifications.
+
+### If This Then That (IFTT) [Software]
+IFTT is used to send the text message notifications to each user.  It is initiated by the application.
