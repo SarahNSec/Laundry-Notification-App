@@ -66,7 +66,7 @@ The mobile device is a subset of the standard user.  That is, every user configu
 IFTT is used to send the text message notifications to each user.  It is initiated by the application via the user's IFTT API key.
 
 ## Security analysis
-Text describing high level diagram with red or other callouts identifying problem points or attacks.
+The app interfaces with a variety of other softwares and hardwares which introduces possible areas that can be exploited by a malicious user.  In addition, the application accepts user input in the user settings sub components which could be abused to inject code.
 ![Security Diagram](./Laundry_Notification_App_Components_w_Security.png)
 
 | Component name | Category of vulnerability | Issue Description | Mitigation |
@@ -74,4 +74,3 @@ Text describing high level diagram with red or other callouts identifying proble
 | MetaWear Device API Connector | Unauthorized Access | This sub component exposes an interface to the MetaWear device API that could be exploited to manipulate the data that is sent to the app | The connector should be implemented securely in line with MBient Lab's best practices.|
 | IFTT API Connector | Unauthorized Access | This sub component exposes an interface to If This Then That, which allows sending notifications to the user, and can be exploited to send notifications to a misuser via bad user input. | The API keys should be stored securely using the native settings interface with all user input properly sanitized to ensure that the API connector cannot be misused. |
 | User Settings | Code Injection | This sub component accepts user input which could make it vulnerable to an injection vulnerability | All user input should be properly sanitized before being stored.  In addition, the device's sandboxing technology should prevent any takeover of the device. |
-|----------------|---------------------------|-------------------|------------|
