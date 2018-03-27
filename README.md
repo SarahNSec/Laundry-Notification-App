@@ -38,7 +38,7 @@ As a **laundry notification app misuser**, I want to **exploit the text message 
 * Text message notification engine (using If This Then That) securely connects to the If This Then That API to ensure notifications can not be redirected.
 
 ## High Level Design
-![Laundry Notification App Components Diagram](./Laundry_Notification_App_Components.png)
+![Laundry Notification App Components Diagram](./resources/Laundry_Notification_App_Components.png)
 
 ## Component List
 ### MetaWear Sensor [Hardware]
@@ -67,7 +67,7 @@ IFTT is used to send the text message notifications to each user.  It is initiat
 
 ## Security analysis
 The app interfaces with a variety of other softwares and hardwares which introduces possible areas that can be exploited by a malicious user.  In addition, the application accepts user input in the user settings sub components which could be abused to inject code.
-![Security Diagram](./Laundry_Notification_App_Components_w_Security.png)
+![Security Diagram](./resources/Laundry_Notification_App_Components_w_Security.png)
 
 | Component name | Category of vulnerability | Issue Description | Mitigation |
 |----------------|---------------------------|-------------------|------------|
