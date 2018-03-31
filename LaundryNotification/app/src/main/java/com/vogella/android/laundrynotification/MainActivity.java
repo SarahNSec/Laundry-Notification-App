@@ -11,8 +11,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.mbientlab.metawear.Data;
 import com.mbientlab.metawear.MetaWearBoard;
+import com.mbientlab.metawear.Route;
+import com.mbientlab.metawear.Subscriber;
 import com.mbientlab.metawear.android.BtleService;
+import com.mbientlab.metawear.builder.RouteBuilder;
+import com.mbientlab.metawear.builder.RouteComponent;
+import com.mbientlab.metawear.data.Acceleration;
 import com.mbientlab.metawear.module.Accelerometer;
 
 import bolts.Continuation;
@@ -63,19 +69,39 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     // connect to the Metawear board device
     private void retrieveBoard(String macAddr) {
         final BluetoothManager btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        final BluetoothDevice remoteDevice = btManager.getAdapter().getRemoteDevice(MW_MAC_ADDRESS);
+        final BluetoothDevice remoteDevice = btManager.getAdapter().getRemoteDevice(macAddr);
 
         // create the MetaWear board object
         this.board = serviceBinder.getMetaWearBoard(remoteDevice);
         // connect to the board over bluetooth
-        this.board.connectAsync().continueWith(new Continuation<Void, Void>() {
+        this.board.connectAsync().onSuccessTask(new Continuation<Void, Task<Route>>() {
 
             @Override
-            public Void then(Task<Void> task) throws Exception {
+            public Task<Route> then(Task<Void> task) throws Exception {
+                Log.i("AppLog", "Connected to " + macAddr);
+
+                accelerometer = board.getModule(Accelerometer.class);
+                accelerometer.configure().odr(25f).commit(); //Set sampling frequency to 25Hz, or closest valid ODR
+                return accelerometer.acceleration().addRouteAsync(new RouteBuilder() {
+                    @Override
+                    public void configure(RouteComponent source) {
+                        source.stream(new Subscriber() {
+                            @Override
+                            public void apply(Data data, Object... env) {
+                                Log.i("AppLog", data.value(Acceleration.class).toString());
+                            }
+                        });
+                    }
+                });
+            }
+        }).continueWith(new Continuation<Route, Void>() {
+
+            @Override
+            public Void then(Task<Route> task) throws Exception {
                 if (task.isFaulted()) {
-                    Log.i("AppLog", "Failed to connect");
+                    Log.w("AppLog", "Failed to configure app", task.getError());
                 } else {
-                    Log.i("AppLog", "Connected");
+                    Log.i("AppLog", "App configured");
                 }
                 return null;
             }
