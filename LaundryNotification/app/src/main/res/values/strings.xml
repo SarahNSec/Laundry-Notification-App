@@ -9,4 +9,7 @@
     <string name="static_settings">Settings</string>
     <string name="static_notifications">Notifications</string>
     <string name="static_notifications_summary">Turn notifications on or off</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
