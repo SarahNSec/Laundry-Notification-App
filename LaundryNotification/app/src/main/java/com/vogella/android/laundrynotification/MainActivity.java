@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 // User selected the settings menu item
                 // TODO: Open the settings UI
                 return true;
+            default:
+                // The users action was not recognized so call super class
+                return super.onOptionsItemSelected(item);
         }
     }
 
