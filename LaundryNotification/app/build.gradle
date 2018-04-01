@@ -30,4 +30,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile 'com.mbientlab:metawear:3.4.0'
+    compile 'com.android.support:preference-v7:26.1.0'
 }

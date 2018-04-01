@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.mbientlab.metawear.Data;
 import com.mbientlab.metawear.MetaWearBoard;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
             case R.id.menuItem_settings:
                 // User selected the settings menu item
                 // TODO: Open the settings UI
+                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 // The users action was not recognized so call super class
