@@ -1,33 +1,31 @@
 package com.vogella.android.laundrynotification;
 
-import android.content.Context;
-
 
 /**
  * Created by sarah on 3/31/2018.
  */
 
 public class MachineStatusUtil {
-    private String status;
+    private MachineStatus status;
 
     // Sets the status
     // Accepts the following values: off, running, finished
     public void setStatus(String newStatus) {
         switch (newStatus) {
             case "off":
-                //this.status = R.string.status_value_off;
+                this.status = MachineStatus.OFF;
                 break;
             case "running":
-                //this.status = R.string.status_value_running;
+                this.status = MachineStatus.RUNNING;
                 break;
             case "finished":
-                //this.status = R.string.status_value_finished;
+                this.status = MachineStatus.FINISHED;
                 break;
         }
     }
 
-    public String getStatus() {
-        return this.status;
+    public int getStatusStringID() {
+        return this.status.getStringID();
     }
 
 }
