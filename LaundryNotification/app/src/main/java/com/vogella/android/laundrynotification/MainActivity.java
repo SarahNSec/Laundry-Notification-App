@@ -64,9 +64,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 // TODO: Open the settings UI
                 Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
                 return true;
-            default:
-                // The users action was not recognized so call super class
-                return super.onOptionsItemSelected(item);
         }
     }
 
