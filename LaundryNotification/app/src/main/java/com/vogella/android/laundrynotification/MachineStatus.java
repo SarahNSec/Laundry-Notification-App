@@ -16,6 +16,6 @@ public enum MachineStatus {
     }
 
     public int getStringID() {
-        return this.string_id
+        return this.string_id;
     }
 }
