@@ -1,8 +1,15 @@
 <resources>
     <string name="app_name">LaundryNotification</string>
     <string name="intro_text">Welcome to the Laundry Notification App!  The current status is listed below.  See the app settings to configure notifications upon status change.</string>
-    <string name="status">Status:</string>
     <string name="status_value_off">Machine Off</string>
     <string name="status_value_running">Machine Running</string>
     <string name="status_value_finished">Machine Off - Ready to Unload!</string>
+
+    <string name="static_status">Status:</string>
+    <string name="static_settings">Settings</string>
+    <string name="static_notifications">Notifications</string>
+    <string name="static_notifications_summary">Turn notifications on or off</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

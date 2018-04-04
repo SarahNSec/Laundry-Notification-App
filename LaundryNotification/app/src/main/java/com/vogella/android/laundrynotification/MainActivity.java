@@ -9,7 +9,12 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.mbientlab.metawear.Data;
 import com.mbientlab.metawear.MetaWearBoard;
@@ -35,11 +40,34 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        setSupportActionBar(mainToolbar);
 
         // Bind the Metawear Btle service when the activity is created
         getApplicationContext().bindService(new Intent(this, BtleService.class),
                 this, Context.BIND_AUTO_CREATE);
         Log.i("AppLog", "onCreate method called");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menuItem_settings:
+                // User selected the settings menu item
+                // TODO: Open the settings UI
+                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                // The users action was not recognized so call super class
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -57,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
         Log.i("AppLog", "Service Connected");
 
-        this.retrieveBoard(this.MW_MAC_ADDRESS);
+        //this.retrieveBoard(this.MW_MAC_ADDRESS);
     }
 
     @Override
