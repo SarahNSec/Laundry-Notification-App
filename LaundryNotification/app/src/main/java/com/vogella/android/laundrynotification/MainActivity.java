@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.os.NetworkOnMainThreadException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -28,6 +29,10 @@ import com.mbientlab.metawear.builder.RouteComponent;
 import com.mbientlab.metawear.data.Acceleration;
 import com.mbientlab.metawear.module.Accelerometer;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+
 import bolts.Continuation;
 import bolts.Task;
 
@@ -37,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     private MetaWearBoard board;
     private Accelerometer accelerometer;
     private MachineStatus machineStatus;
+    private NotificationUtil notifications;
 
 
     @Override
@@ -50,6 +56,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         // view to display that status
         this.setMachineStatus(MachineStatus.OFF);
         this.setMachineStatusValue();
+
+        // establish notification utility
+        this.notifications = new NotificationUtil();
 
         // Bind the Metawear Btle service when the activity is created
         getApplicationContext().bindService(new Intent(this, BtleService.class),
@@ -163,7 +172,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 Log.i("AppLog", "Changing status to FINISHED");
                 this.setMachineStatus(MachineStatus.FINISHED);
                 this.setMachineStatusValue();
-                NotificationUtil.post();
+                try {
+                    this.notifications.get();
+                } catch (Exception e) {
+                    Log.w("AppLog", "ERROR_MAIN_THREAD");
+                }
                 break;
             default:
                 // do nothing
