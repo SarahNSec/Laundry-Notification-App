@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.mbientlab.metawear.Data;
@@ -136,6 +137,23 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         });
     }
 
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.statusOff_button:
+                // change the status to off
+                break;
+            case R.id.statusRunning_button:
+                // change the status to running
+                break;
+            case R.id.statusFinished_button:
+                // change the status to finished
+                break;
+            default:
+                // do nothing
+                break;
+        }
+    }
+
     // Disconnects from the Metawear board
     private void disconnectBoard(String macAddr) {
         this.board.disconnectAsync().continueWith(new Continuation<Void, Void>() {
@@ -147,4 +165,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
             }
         });
     }
+
+
 }
