@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mbientlab.metawear.Data;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     private final String MW_MAC_ADDRESS= "DA:62:2D:9A:D5:8D";
     private MetaWearBoard board;
     private Accelerometer accelerometer;
+    private MachineStatus machineStatus;
 
 
     @Override
@@ -43,6 +45,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         setContentView(R.layout.activity_main);
         Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(mainToolbar);
+
+        // establish the machine status tracker and update the
+        // view to display that status
+        this.setMachineStatus(MachineStatus.OFF);
+        this.setMachineStatusValue();
 
         // Bind the Metawear Btle service when the activity is created
         getApplicationContext().bindService(new Intent(this, BtleService.class),
@@ -140,16 +147,27 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.statusOff_button:
-                // change the status to off
+                // change the status to OFF
+                Log.i("AppLog", "Changing status to OFF");
+                this.setMachineStatus(MachineStatus.OFF);
+                this.setMachineStatusValue();
                 break;
             case R.id.statusRunning_button:
                 // change the status to running
+                Log.i("AppLog", "Changing status to RUNNING");
+                this.setMachineStatus(MachineStatus.RUNNING);
+                this.setMachineStatusValue();
                 break;
             case R.id.statusFinished_button:
                 // change the status to finished
+                Log.i("AppLog", "Changing status to FINISHED");
+                this.setMachineStatus(MachineStatus.FINISHED);
+                this.setMachineStatusValue();
+                NotificationUtil.post();
                 break;
             default:
                 // do nothing
+                Log.i("AppLog", "ERROR: did not recognize action");
                 break;
         }
     }
@@ -164,6 +182,18 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 return null;
             }
         });
+    }
+
+    // Updates the machineStatus variable with the current status
+    private void setMachineStatus(MachineStatus status) {
+        this.machineStatus = status;
+        Log.i("AppLog", "New Machine Status: " + this.machineStatus);
+    }
+
+    // Updates the statusValue text view with the current value of the machineStatus variable
+    private void setMachineStatusValue() {
+        TextView statusText = (TextView)findViewById(R.id.statusValue);
+        statusText.setText(this.machineStatus.getStringID());
     }
 
 
