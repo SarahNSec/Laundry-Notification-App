@@ -52,6 +52,7 @@ The app connects to the sensor via the MetaWear API.  This connector drives the 
 
 #### If This Then That (IFTT) API Connector
 The Application initiates the text message notification by connecting to the (IFTT) API.  Via this connector, the app crafts the text message and sends it to the user's mobile device.
+  * Implemented in NotificationUtil.java class
 
 #### User Settings
 A subcomponent of the app allows for configuring users.  Each user must have an IFTT API key to interact with an applet that allows sending text messages.
