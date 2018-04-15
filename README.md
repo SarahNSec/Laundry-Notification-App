@@ -28,12 +28,12 @@ As a **person who does laundry**, I want to **receive status notifications** so 
 * App is able to send a text message notification at a defined interval until the machine is unloaded
 
 ## Misuser stories
-As a **laundry notification app misuser**, I want to **exploit the application** so I can **misrepresent the machine status to be able to control when I can use it**.  
+As an **evil roommate**, I want to **exploit the application** so I can **misrepresent the machine status to be able to control when I can use it**.  
 **Mitigations:**  
 * The app securely implements a connection to the MetaWear device API
 * The app filters/escapes any user input supplied to the app to avoid common web application attack vulnerabilities.
 
-As a **laundry notification app misuser**, I want to **exploit the text message notification feature** so I can **notify unauthorized individuals of the status**.  
+As an **evil roommate**, I want to **exploit the text message notification feature** so I can **notify unauthorized individuals of the status**.  
 **Mitigations:**  
 * Text message notification engine (using If This Then That) securely connects to the If This Then That API to ensure notifications can not be redirected.
 
