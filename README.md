@@ -9,19 +9,19 @@ Are you so busy that you forget to switch your laundry around?  Do you find your
 * Send text messages when the washing machine is finished running and follow-ups if the laundry is not unloaded
 
 ## User stories
-As a **standard user**, I want to **see the machine status** so I can **see if the machine is running, stopped, or already unloaded**.  
+As a **person who does laundry**, I want to **see the machine status** so I can **see if the machine is running, stopped, or already unloaded**.  
 **Acceptance Criteria:**
 * App connects to sensor and streams data
 * App is able to interpret data to determine the machine status
 * App displays the machine status
 
-As a **standard user**, I want to **receive status notifications** so I can **know when to unload the laundry**.  
+As a **person who does laundry**, I want to **receive status notifications** so I can **know when to unload the laundry**.  
 **Acceptance Criteria:**
 * App connects to sensor and streams data
 * App is able to interpret data to determine the machine status
 * App is able to send a text message notification when the status changes from running to stopped
 
-As a **standard user**, I want to **receive status notifications** so I can **be reminded if I forgot to unload the laundry**.  
+As a **person who does laundry**, I want to **receive status notifications** so I can **be reminded if I forgot to unload the laundry**.  
 **Acceptance Criteria:**
 * App connects to sensor and streams data
 * App continues to check machine status to determine when it has been unloaded
