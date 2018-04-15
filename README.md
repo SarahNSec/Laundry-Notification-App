@@ -9,31 +9,31 @@ Are you so busy that you forget to switch your laundry around?  Do you find your
 * Send text messages when the washing machine is finished running and follow-ups if the laundry is not unloaded
 
 ## User stories
-As a **standard user**, I want to **see the machine status** so I can **see if the machine is running, stopped, or already unloaded**.  
+As a **person who does laundry**, I want to **see the machine status** so I can **see if the machine is running, stopped, or already unloaded**.  
 **Acceptance Criteria:**
 * App connects to sensor and streams data
 * App is able to interpret data to determine the machine status
 * App displays the machine status
 
-As a **standard user**, I want to **receive status notifications** so I can **know when to unload the laundry**.  
+As a **person who does laundry**, I want to **receive status notifications** so I can **know when to unload the laundry**.  
 **Acceptance Criteria:**
 * App connects to sensor and streams data
 * App is able to interpret data to determine the machine status
 * App is able to send a text message notification when the status changes from running to stopped
 
-As a **standard user**, I want to **receive status notifications** so I can **be reminded if I forgot to unload the laundry**.  
+As a **person who does laundry**, I want to **receive status notifications** so I can **be reminded if I forgot to unload the laundry**.  
 **Acceptance Criteria:**
 * App connects to sensor and streams data
 * App continues to check machine status to determine when it has been unloaded
 * App is able to send a text message notification at a defined interval until the machine is unloaded
 
 ## Misuser stories
-As a **laundry notification app misuser**, I want to **exploit the application** so I can **misrepresent the machine status to be able to control when I can use it**.  
+As an **evil roommate**, I want to **exploit the application** so I can **misrepresent the machine status to be able to control when I can use it**.  
 **Mitigations:**  
 * The app securely implements a connection to the MetaWear device API
 * The app filters/escapes any user input supplied to the app to avoid common web application attack vulnerabilities.
 
-As a **laundry notification app misuser**, I want to **exploit the text message notification feature** so I can **notify unauthorized individuals of the status**.  
+As an **evil roommate**, I want to **exploit the text message notification feature** so I can **notify unauthorized individuals of the status**.  
 **Mitigations:**  
 * Text message notification engine (using If This Then That) securely connects to the If This Then That API to ensure notifications can not be redirected.
 
@@ -52,9 +52,11 @@ The app connects to the sensor via the MetaWear API.  This connector drives the 
 
 #### If This Then That (IFTT) API Connector
 The Application initiates the text message notification by connecting to the (IFTT) API.  Via this connector, the app crafts the text message and sends it to the user's mobile device.
+  * Implemented in NotificationUtil.java class
 
 #### User Settings
 A subcomponent of the app allows for configuring users.  Each user must have an IFTT API key to interact with an applet that allows sending text messages.
+ * Implemented in the SettingsFragment.java class (incomplete)
 
 ### Home-based Android Device [Hardware]
 The application is designed to run on an Android device.  This device should remain in the same home as the washing machine in order for the app to connect to the MetaWear device.  This device also requires a wifi connection to connect to the IFTT API.
