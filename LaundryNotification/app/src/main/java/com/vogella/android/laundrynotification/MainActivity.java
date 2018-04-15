@@ -36,6 +36,9 @@ import java.net.UnknownHostException;
 import bolts.Continuation;
 import bolts.Task;
 
+/**
+ * Main Activity for the app.  Establishes layout and creates board object
+ */
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
     private BtleService.LocalBinder serviceBinder;
     private final String MW_MAC_ADDRESS= "DA:62:2D:9A:D5:8D";
@@ -153,6 +156,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         });
     }
 
+    /**
+     * Function that is called when one of the buttons for changing status is called.
+     * This will be transitioned once the data is driving the status change.
+     * @param view
+     */
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.statusOff_button:

@@ -10,6 +10,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ *  Facilitates making requests to the If This Then That (IFTTT) API
+ *  to create notifications.
+ */
 public class NotificationUtil {
     private String iftttAPIKey = "dgVbFkX8p2zJKoMUx3Czyh";
     private String event_hook = "machine_status_change";
@@ -19,6 +23,10 @@ public class NotificationUtil {
         this.client = new OkHttpClient();
     }
 
+    /**
+     * Creates a GET request to the IFTTT API
+     * @throws Exception if the connection is unsuccessful.
+     */
     public void get() throws Exception {
         // make the get request
         String url = String.format("https://maker.ifttt.com/trigger/%s/with/key/%s", this.event_hook, this.iftttAPIKey);
