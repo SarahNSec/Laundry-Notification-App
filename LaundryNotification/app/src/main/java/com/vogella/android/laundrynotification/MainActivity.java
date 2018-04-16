@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.os.NetworkOnMainThreadException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -37,15 +36,17 @@ import bolts.Continuation;
 import bolts.Task;
 
 /**
- * Main Activity for the app.  Establishes layout and creates board object
+ * Main Activity for the app.  Establishes layout and creates and connects to MetaWear
+ * board object
  */
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
     private BtleService.LocalBinder serviceBinder;
-    private final String MW_MAC_ADDRESS= "DA:62:2D:9A:D5:8D";
+    private final String MW_MAC_ADDRESS= "F7:02:E6:49:04:AF";
+    //private final String MW_MAC_ADDRESS= "DA:62:2D:9A:D5:8D";
     private MetaWearBoard board;
-    private Accelerometer accelerometer;
     private MachineStatus machineStatus;
     private NotificationUtil notifications;
+    private Accelerometer accelerometer;
 
 
     @Override
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         // Bind the Metawear Btle service when the activity is created
         getApplicationContext().bindService(new Intent(this, BtleService.class),
                 this, Context.BIND_AUTO_CREATE);
+
         Log.i("AppLog", "onCreate method called");
     }
 
@@ -105,7 +107,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
         Log.i("AppLog", "Service Connected");
 
-        //this.retrieveBoard(this.MW_MAC_ADDRESS);
+        this.retrieveBoard(this.MW_MAC_ADDRESS);
+
     }
 
     @Override
@@ -116,11 +119,14 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     // connect to the Metawear board device
     private void retrieveBoard(String macAddr) {
+        Log.i("AppLog", "MAC Addr: " + macAddr);
         final BluetoothManager btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         final BluetoothDevice remoteDevice = btManager.getAdapter().getRemoteDevice(macAddr);
+        Log.i("AppLog", "Remote Device: " + remoteDevice);
 
         // create the MetaWear board object
         this.board = serviceBinder.getMetaWearBoard(remoteDevice);
+        Log.i("AppLog", "Board: " + this.board);
         // connect to the board over bluetooth
         this.board.connectAsync().onSuccessTask(new Continuation<Void, Task<Route>>() {
 
@@ -129,28 +135,34 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 Log.i("AppLog", "Connected to " + macAddr);
 
                 accelerometer = board.getModule(Accelerometer.class);
-                accelerometer.configure().odr(25f).commit(); //Set sampling frequency to 25Hz, or closest valid ODR
+                accelerometer.configure().odr(25f).commit();
                 return accelerometer.acceleration().addRouteAsync(new RouteBuilder() {
                     @Override
                     public void configure(RouteComponent source) {
                         source.stream(new Subscriber() {
                             @Override
                             public void apply(Data data, Object... env) {
-                                Log.i("AppLog", data.value(Acceleration.class).toString());
+                                // Do what I need to with the data here
+                                DataProcessingUtil dataproc = new DataProcessingUtil();
+                                dataproc.processData(data);
+                                //Log.i("AppLog", data.value(Acceleration.class).toString());
                             }
                         });
                     }
                 });
             }
         }).continueWith(new Continuation<Route, Void>() {
-
             @Override
             public Void then(Task<Route> task) throws Exception {
                 if (task.isFaulted()) {
                     Log.w("AppLog", "Failed to configure app", task.getError());
                 } else {
                     Log.i("AppLog", "App configured");
+                    accelerometer.acceleration().start();
+                    accelerometer.start();
+                    Log.i("AppLog", "Accelerometer started");
                 }
+
                 return null;
             }
         });
@@ -195,6 +207,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     // Disconnects from the Metawear board
     private void disconnectBoard(String macAddr) {
+        accelerometer.stop();
+        accelerometer.acceleration().stop();
         this.board.disconnectAsync().continueWith(new Continuation<Void, Void>() {
 
             @Override
