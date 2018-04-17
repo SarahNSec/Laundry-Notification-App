@@ -6,7 +6,11 @@ import com.mbientlab.metawear.Data;
 import com.mbientlab.metawear.data.Acceleration;
 
 public class DataProcessingUtil {
-    public DataProcessingUtil() {}
+    private Boolean machineStarted;
+
+    public DataProcessingUtil() {
+        this.machineStarted = false;
+    }
 
     public void processData(Data data) {
         // process the data
