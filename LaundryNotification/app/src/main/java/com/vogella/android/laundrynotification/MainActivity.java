@@ -186,12 +186,16 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 Log.i("AppLog", "Changing status to OFF");
                 this.setMachineStatus(MachineStatus.OFF);
                 this.setMachineStatusValue();
+                accelerometer.stop();
+                accelerometer.acceleration().stop();
                 break;
             case R.id.statusRunning_button:
                 // change the status to running
                 Log.i("AppLog", "Changing status to RUNNING");
                 this.setMachineStatus(MachineStatus.RUNNING);
                 this.setMachineStatusValue();
+                accelerometer.acceleration().start();
+                accelerometer.start();
                 break;
             case R.id.statusFinished_button:
                 // change the status to finished
