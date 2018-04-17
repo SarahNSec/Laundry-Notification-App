@@ -5,6 +5,9 @@ import android.util.Log;
 import com.mbientlab.metawear.Data;
 import com.mbientlab.metawear.data.Acceleration;
 
+/**
+ * This class will implement the algorithm to translate the data to machine status
+ */
 public class DataProcessingUtil {
     public DataProcessingUtil() {}
 

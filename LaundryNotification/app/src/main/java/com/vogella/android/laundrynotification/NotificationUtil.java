@@ -47,9 +47,5 @@ public class NotificationUtil {
                 Log.i("AppLog", "Get request complete: " + response.body().string());
             }
         });
-
-//        Response response = this.client.newCall(request).execute();
-//        Log.i("AppLog", "Get request complete: " + response.body().string());
-//        return response.body().string();
     }
 }
