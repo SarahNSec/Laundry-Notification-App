@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     private MachineStatus machineStatus;
     private NotificationUtil notifications;
     private Accelerometer accelerometer;
+    private DataProcessingUtil dataproc;
 
 
     @Override
@@ -63,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
         // establish notification utility
         this.notifications = new NotificationUtil();
+
+        // establish data processing utility
+        this.dataproc = new DataProcessingUtil();
 
         // Bind the Metawear Btle service when the activity is created
         getApplicationContext().bindService(new Intent(this, BtleService.class),
@@ -143,7 +147,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                             @Override
                             public void apply(Data data, Object... env) {
                                 // Do what I need to with the data here
-                                DataProcessingUtil dataproc = new DataProcessingUtil();
                                 dataproc.processData(data);
                                 //Log.i("AppLog", data.value(Acceleration.class).toString());
                             }
