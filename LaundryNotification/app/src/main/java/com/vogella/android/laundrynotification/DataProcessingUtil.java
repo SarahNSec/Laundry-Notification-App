@@ -18,9 +18,7 @@ public class DataProcessingUtil {
     private int currentMin;
     private long currentMinTimeStamp;
     private ArrayList<Integer> frequencyCount;
-    private double runningAvg_x;
-    private double runningAvg_y;
-    private double runningAvg_z;
+    private double runningAvg;
     private int dataPointCount;
 
     public DataProcessingUtil() {
@@ -28,9 +26,7 @@ public class DataProcessingUtil {
         this.currentMin = 0;
         this.frequencyCount = new ArrayList<Integer>();
         this.currentMinTimeStamp = 0;
-        this.runningAvg_x = 0;
-        this.runningAvg_y = 0;
-        this.runningAvg_z = 0;
+        this.runningAvg = 0;
         this.dataPointCount = 0;
     }
 
@@ -50,16 +46,37 @@ public class DataProcessingUtil {
         double y_value = data.value(Acceleration.class).y();
         double z_value = data.value(Acceleration.class).z();
 
-        if (Math.abs(x_value - this.runningAvg_x)>= 0.005 ||
-                Math.abs(y_value - this.runningAvg_y)>= 0.004 ||
-                Math.abs(z_value - this.runningAvg_z)>= 0.004) {
+        double magnitude = Math.sqrt(Math.pow(x_value,2) + Math.pow(y_value,2) + Math.pow(z_value,2));
+
+        if (Math.abs(magnitude - this.runningAvg)>= 1.043) {
+            Log.i("AppLog", "Significant Event at minute " + this.currentMin);
             this.frequencyCount.set(this.currentMin, this.frequencyCount.get(this.currentMin) + 1);
         }
 
         Log.i("AppLog", data.value(Acceleration.class).toString());
-        this.runningAvg_x = (x_value + this.runningAvg_x)/(this.dataPointCount + 1);
-        this.runningAvg_y = (y_value + this.runningAvg_y)/(this.dataPointCount + 1);
-        this.runningAvg_z = (z_value + this.runningAvg_z)/(this.dataPointCount + 1);
+        this.runningAvg = (magnitude + this.runningAvg)/(this.dataPointCount + 1);
         this.dataPointCount++;
+
+        if (this.currentMin >= 10) {
+            this.setMachineStatus();
+        }
+    }
+
+    private void setMachineStatus() {
+        int belowThreshold = 0;
+        for (int i=this.currentMin - 10; i <= this.currentMin; i++) {
+            if (this.frequencyCount.get(i) < 50) {
+                belowThreshold += 1;
+            }
+        }
+        if (belowThreshold == 10) {
+            this.machineStarted = false;
+        } else {
+            this.machineStarted = true;
+        }
+    }
+
+    public Boolean getMachineStarted() {
+        return machineStarted;
     }
 }
