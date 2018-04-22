@@ -20,6 +20,7 @@ public class DataProcessingUtil {
     private ArrayList<Integer> frequencyCount;
     private double runningAvg;
     private int dataPointCount;
+    private int belowThresholdCount;
 
     public DataProcessingUtil() {
         this.machineStarted = false;
@@ -28,6 +29,7 @@ public class DataProcessingUtil {
         this.currentMinTimeStamp = 0;
         this.runningAvg = 0;
         this.dataPointCount = 0;
+        this.belowThresholdCount = 0;
     }
 
     public void processData(Data data) {
@@ -37,8 +39,28 @@ public class DataProcessingUtil {
         } else {
             long currentEpoch = System.currentTimeMillis()/1000/60;
             if (currentEpoch != this.currentMinTimeStamp) {
+                Log.i("Troubleshooting", "Hit nested if statement");
                 this.currentMin += (int)(currentEpoch - this.currentMinTimeStamp);
                 this.currentMinTimeStamp = currentEpoch;
+                if (this.currentMin >= 1) {
+                    Log.i("Troubleshooting", "CurrentMin >= 1");
+                    // Stops running here.  I don't get any of the following Logs.
+                    if (this.frequencyCount.get(this.currentMin - 1) < 50) {
+                        Log.i("Troubleshooting", "frequencyCount < 50");
+                        this.belowThresholdCount += 1;
+                    } else {
+                        Log.i("Troubleshooting", "frequencyCount >= 50");
+                        this.belowThresholdCount = 0;
+                    }
+                    Log.i("Troubleshooting", "Below Threshold: " + this.belowThresholdCount);
+                    if (this.belowThresholdCount == 10) {
+                        this.machineStarted = false;
+                        Log.i("Troubleshooting", "Machine not running");
+                    } else {
+                        this.machineStarted = true;
+                        Log.i("Troubleshooting", "Machine running");
+                    }
+                }
             }
         }
 
@@ -49,31 +71,17 @@ public class DataProcessingUtil {
         double magnitude = Math.sqrt(Math.pow(x_value,2) + Math.pow(y_value,2) + Math.pow(z_value,2));
 
         if (Math.abs(magnitude - this.runningAvg)>= 1.043) {
-            Log.i("AppLog", "Significant Event at minute " + this.currentMin);
+            Log.i("Troubleshooting", "Significant Event at minute " + this.currentMin);
             this.frequencyCount.set(this.currentMin, this.frequencyCount.get(this.currentMin) + 1);
         }
 
-        Log.i("AppLog", data.value(Acceleration.class).toString());
+        //Log.i("AppLog", data.value(Acceleration.class).toString());
         this.runningAvg = (magnitude + this.runningAvg)/(this.dataPointCount + 1);
+        Log.i("AppLog", "Running Average updated");
         this.dataPointCount++;
+        Log.i("AppLog", "Data Point Count updated");
 
-        if (this.currentMin >= 10) {
-            this.setMachineStatus();
-        }
-    }
 
-    private void setMachineStatus() {
-        int belowThreshold = 0;
-        for (int i=this.currentMin - 10; i <= this.currentMin; i++) {
-            if (this.frequencyCount.get(i) < 50) {
-                belowThreshold += 1;
-            }
-        }
-        if (belowThreshold == 10) {
-            this.machineStarted = false;
-        } else {
-            this.machineStarted = true;
-        }
     }
 
     public Boolean getMachineStarted() {

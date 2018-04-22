@@ -148,7 +148,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                             public void apply(Data data, Object... env) {
                                 // Do what I need to with the data here
                                 dataproc.processData(data);
-                                //Log.i("AppLog", data.value(Acceleration.class).toString());
+                                MachineStatus newStatus = determineMachineStatus(dataproc.getMachineStarted());
+                                setMachineStatus(newStatus);
+                                setMachineStatusValue();
                             }
                         });
                     }
@@ -183,6 +185,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 Log.i("AppLog", "Changing status to OFF");
                 this.setMachineStatus(MachineStatus.OFF);
                 this.setMachineStatusValue();
+                accelerometer.stop();
+                accelerometer.acceleration().stop();
                 break;
             case R.id.statusRunning_button:
                 // change the status to running
@@ -234,5 +238,27 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         statusText.setText(this.machineStatus.getStringID());
     }
 
+    private MachineStatus determineMachineStatus(Boolean machineRunning) {
+        MachineStatus currStatus = this.machineStatus;
+        if (currStatus == MachineStatus.OFF && machineRunning) {
+            return this.getNextStatus(this.machineStatus);
+        } else if (currStatus == MachineStatus.RUNNING && !machineRunning) {
+            return this.getNextStatus(this.machineStatus);
+        } else {
+            return this.machineStatus;
+        }
+    }
 
+    private MachineStatus getNextStatus(MachineStatus currStatus) {
+        switch (currStatus) {
+            case OFF:
+                return MachineStatus.RUNNING;
+            case RUNNING:
+                return MachineStatus.FINISHED;
+            case FINISHED:
+                return MachineStatus.OFF;
+            default:
+                return MachineStatus.OFF;
+        }
+    }
 }
