@@ -49,6 +49,7 @@ The Laundry Notification app collects the data from the MetaWear sensor, analyze
 
 #### MetaWear API Connector
 The app connects to the sensor via the MetaWear API.  This connector drives the requirement that the device running the application be kept in home where the the washing machine is located.
+  * Implemented in MainActivity.java under the retrieve board function mostly
 
 #### If This Then That (IFTT) API Connector
 The Application initiates the text message notification by connecting to the (IFTT) API.  Via this connector, the app crafts the text message and sends it to the user's mobile device.
