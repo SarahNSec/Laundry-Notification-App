@@ -31,6 +31,9 @@ import com.mbientlab.metawear.module.Accelerometer;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import bolts.Continuation;
 import bolts.Task;
@@ -42,12 +45,12 @@ import bolts.Task;
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
     private BtleService.LocalBinder serviceBinder;
     private final String MW_MAC_ADDRESS= "F7:02:E6:49:04:AF";
-    //private final String MW_MAC_ADDRESS= "DA:62:2D:9A:D5:8D";
     private MetaWearBoard board;
     private MachineStatus machineStatus;
     private NotificationUtil notifications;
     private Accelerometer accelerometer;
     private DataProcessingUtil dataproc;
+    private ScheduledExecutorService scheduleTaskExecutor;
 
 
     @Override
@@ -67,6 +70,28 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
         // establish data processing utility
         this.dataproc = new DataProcessingUtil();
+
+        // Create task scheduler
+        this.scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+        this.scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                // Do stuff here
+                dataproc.checkMachineStatus();
+                //Boolean machinestarted = dataproc.getMachineStarted();
+
+                        runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do stuff to update UI here
+                        MachineStatus newStatus = determineMachineStatus(dataproc.getMachineStarted());
+                        Log.i("Troubleshooting", "machine status: " + newStatus);
+                        setMachineStatus(newStatus);
+                        setMachineStatusValue();
+                    }
+                });
+            }
+        },0, 60, TimeUnit.SECONDS);
 
         // Bind the Metawear Btle service when the activity is created
         getApplicationContext().bindService(new Intent(this, BtleService.class),
@@ -139,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 Log.i("AppLog", "Connected to " + macAddr);
 
                 accelerometer = board.getModule(Accelerometer.class);
-                accelerometer.configure().odr(25f).commit();
+                accelerometer.configure().odr(15f).commit();
                 return accelerometer.acceleration().addRouteAsync(new RouteBuilder() {
                     @Override
                     public void configure(RouteComponent source) {
@@ -148,9 +173,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                             public void apply(Data data, Object... env) {
                                 // Do what I need to with the data here
                                 dataproc.processData(data);
-                                MachineStatus newStatus = determineMachineStatus(dataproc.getMachineStarted());
-                                setMachineStatus(newStatus);
-                                setMachineStatusValue();
                             }
                         });
                     }
