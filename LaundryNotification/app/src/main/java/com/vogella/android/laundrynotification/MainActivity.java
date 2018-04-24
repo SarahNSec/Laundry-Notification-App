@@ -32,6 +32,9 @@ import com.mbientlab.metawear.module.Accelerometer;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import bolts.Continuation;
 import bolts.Task;
@@ -43,11 +46,12 @@ import bolts.Task;
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
     private BtleService.LocalBinder serviceBinder;
     private final String MW_MAC_ADDRESS= "F7:02:E6:49:04:AF";
-    //private final String MW_MAC_ADDRESS= "DA:62:2D:9A:D5:8D";
     private MetaWearBoard board;
     private MachineStatus machineStatus;
     private NotificationUtil notifications;
     private Accelerometer accelerometer;
+    private DataProcessingUtil dataproc;
+    private ScheduledExecutorService scheduleTaskExecutor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,31 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
         // establish notification utility
         this.notifications = new NotificationUtil();
+
+        // establish data processing utility
+        this.dataproc = new DataProcessingUtil();
+
+        // Create task scheduler
+        this.scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+        this.scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                // Do stuff here
+                dataproc.checkMachineStatus();
+                //Boolean machinestarted = dataproc.getMachineStarted();
+
+                        runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do stuff to update UI here
+                        MachineStatus newStatus = determineMachineStatus(dataproc.getMachineStarted());
+                        Log.i("Troubleshooting", "machine status: " + newStatus);
+                        setMachineStatus(newStatus);
+                        setMachineStatusValue();
+                    }
+                });
+            }
+        },0, 60, TimeUnit.SECONDS);
 
         // Bind the Metawear Btle service when the activity is created
         getApplicationContext().bindService(new Intent(this, BtleService.class),
@@ -139,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
                 // configure the accelerometer and connect
                 accelerometer = board.getModule(Accelerometer.class);
-                accelerometer.configure().odr(25f).commit();
+                accelerometer.configure().odr(15f).commit();
                 return accelerometer.acceleration().addRouteAsync(new RouteBuilder() {
                     @Override
                     public void configure(RouteComponent source) {
@@ -147,9 +176,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                             @Override
                             public void apply(Data data, Object... env) {
                                 // Do what I need to with the data here
-
-                                // for now, just log data
-                                Log.i("AppLog", data.value(Acceleration.class).toString());
+                                dataproc.processData(data);
                             }
                         });
                     }
@@ -241,5 +268,27 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         statusText.setText(this.machineStatus.getStringID());
     }
 
+    private MachineStatus determineMachineStatus(Boolean machineRunning) {
+        MachineStatus currStatus = this.machineStatus;
+        if (currStatus == MachineStatus.OFF && machineRunning) {
+            return this.getNextStatus(this.machineStatus);
+        } else if (currStatus == MachineStatus.RUNNING && !machineRunning) {
+            return this.getNextStatus(this.machineStatus);
+        } else {
+            return this.machineStatus;
+        }
+    }
 
+    private MachineStatus getNextStatus(MachineStatus currStatus) {
+        switch (currStatus) {
+            case OFF:
+                return MachineStatus.RUNNING;
+            case RUNNING:
+                return MachineStatus.FINISHED;
+            case FINISHED:
+                return MachineStatus.OFF;
+            default:
+                return MachineStatus.OFF;
+        }
+    }
 }
