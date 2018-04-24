@@ -9,8 +9,6 @@ import java.util.HashMap;
 
 /**
  * This class processes the data sent from the accelerometer
- * To start, it assumes that the accelerometer values start at
- * x ~ 0, y ~ 0, and z ~ 1
  */
 public class DataProcessingUtil {
     private Boolean machineStarted;
