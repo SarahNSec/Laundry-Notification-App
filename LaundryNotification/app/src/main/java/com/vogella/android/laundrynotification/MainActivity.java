@@ -41,7 +41,7 @@ import bolts.Task;
 
 /**
  * Main Activity for the app.  Establishes layout and creates and connects to MetaWear
- * board object
+ * board object.  Also establishes a timer to regularly check the machine status.
  */
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
     private BtleService.LocalBinder serviceBinder;
@@ -62,8 +62,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(mainToolbar);
 
-        // establish the machine status tracker and update the
-        // view to display that status
+        // Set the machine status to Off and update the view to display that status
         this.setMachineStatusValue(MachineStatus.OFF);
 
         // establish notification utility & follow-up timer
@@ -73,19 +72,22 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         // establish data processing utility
         this.dataproc = new DataProcessingUtil();
 
-        // Create task scheduler
+        // Bind the Metawear Btle service when the activity is created
+        getApplicationContext().bindService(new Intent(this, BtleService.class),
+                this, Context.BIND_AUTO_CREATE);
+
+        // Create task scheduler to check machine status every 60 seconds
         this.scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
         this.scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                // Do stuff here
+                // Every 60 seconds, check the machine status
                 dataproc.checkMachineStatus();
-                //Boolean machinestarted = dataproc.getMachineStarted();
 
-                        runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        // Do stuff to update UI here
+                        // Update the UI
                         MachineStatus newStatus = determineMachineStatus(dataproc.getMachineStarted());
                         Log.i("Troubleshooting", "machine status: " + newStatus);
                         setMachineStatusValue(newStatus);
@@ -93,12 +95,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 });
             }
         },0, 60, TimeUnit.SECONDS);
-
-        // Bind the Metawear Btle service when the activity is created
-        getApplicationContext().bindService(new Intent(this, BtleService.class),
-                this, Context.BIND_AUTO_CREATE);
-
-        Log.i("AppLog", "onCreate method called");
     }
 
     @Override
@@ -147,7 +143,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         this.disconnectBoard(this.MW_MAC_ADDRESS);
     }
 
-    // connect to the Metawear board device
+    /**
+     * Connect the app to the metawear board device and start the accelerometer
+     */
     private void retrieveBoard(String macAddr) {
         Log.i("AppLog", "MAC Addr: " + macAddr);
 
@@ -237,8 +235,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         }
     }
 
-    /*
-        Disconnects the app from the Metawear board and turns off the accelerometer
+    /**
+     *  Disconnects the app from the Metawear board and turns off the accelerometer
      */
     private void disconnectBoard(String macAddr) {
         accelerometer.stop();
@@ -253,9 +251,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         });
     }
 
-    /*
-        Sets the machine status variable to the new value and updates the screen to reflect that
-        variable
+    /**
+     * Sets the machine status variable to the new value and updates the screen to reflect that
+     * variable
      */
     private void setMachineStatusValue(MachineStatus status) {
         this.machineStatus = status;
@@ -264,10 +262,10 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         statusText.setText(this.machineStatus.getStringID());
     }
 
-    /*
-        This method determines the current machine status based on the existing status and
-        the feedback from the data processing utility.
-        Returns the new status that is determined (or the existing status if nothing changed)
+    /**
+     * This method determines the current machine status based on the existing status and
+     * the feedback from the data processing utility.
+     * Returns the new status that is determined (or the existing status if nothing changed)
      */
     private MachineStatus determineMachineStatus(Boolean machineRunning) {
         MachineStatus currStatus = this.machineStatus;
