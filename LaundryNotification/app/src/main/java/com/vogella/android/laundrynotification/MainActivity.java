@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     private Accelerometer accelerometer;
     private DataProcessingUtil dataproc;
     private ScheduledExecutorService scheduleTaskExecutor;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +149,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     // connect to the Metawear board device
     private void retrieveBoard(String macAddr) {
         Log.i("AppLog", "MAC Addr: " + macAddr);
+
+        // retrieve the Bluetooth device
         final BluetoothManager btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         final BluetoothDevice remoteDevice = btManager.getAdapter().getRemoteDevice(macAddr);
         Log.i("AppLog", "Remote Device: " + remoteDevice);
@@ -156,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         // create the MetaWear board object
         this.board = serviceBinder.getMetaWearBoard(remoteDevice);
         Log.i("AppLog", "Board: " + this.board);
+
         // connect to the board over bluetooth
         this.board.connectAsync().onSuccessTask(new Continuation<Void, Task<Route>>() {
 
@@ -163,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
             public Task<Route> then(Task<Void> task) throws Exception {
                 Log.i("AppLog", "Connected to " + macAddr);
 
+                // configure the accelerometer and connect
                 accelerometer = board.getModule(Accelerometer.class);
                 accelerometer.configure().odr(15f).commit();
                 return accelerometer.acceleration().addRouteAsync(new RouteBuilder() {
@@ -185,6 +189,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                     Log.w("AppLog", "Failed to configure app", task.getError());
                 } else {
                     Log.i("AppLog", "App configured");
+
+                    // once configured, start the accelerometer
                     accelerometer.acceleration().start();
                     accelerometer.start();
                     Log.i("AppLog", "Accelerometer started");
@@ -215,6 +221,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 Log.i("AppLog", "Changing status to RUNNING");
                 this.setMachineStatus(MachineStatus.RUNNING);
                 this.setMachineStatusValue();
+                accelerometer.acceleration().start();
+                accelerometer.start();
                 break;
             case R.id.statusFinished_button:
                 // change the status to finished
@@ -248,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         });
     }
 
-    // Updates the machineStatus variable with the current status
+    // Updates the machineStatus variable with the passed status
     private void setMachineStatus(MachineStatus status) {
         this.machineStatus = status;
         Log.i("AppLog", "New Machine Status: " + this.machineStatus);
