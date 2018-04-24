@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Will be used to display settings
  */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
