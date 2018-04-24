@@ -46,12 +46,14 @@ import bolts.Task;
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
     private BtleService.LocalBinder serviceBinder;
     private final String MW_MAC_ADDRESS= "F7:02:E6:49:04:AF";
+    //private final String MW_MAC_ADDRESS= "C7:CF:3D:0E:D9:0E";
     private MetaWearBoard board;
     private MachineStatus machineStatus;
     private NotificationUtil notifications;
     private Accelerometer accelerometer;
     private DataProcessingUtil dataproc;
     private ScheduledExecutorService scheduleTaskExecutor;
+    private int followupNotificationTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +64,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
         // establish the machine status tracker and update the
         // view to display that status
-        this.setMachineStatus(MachineStatus.OFF);
-        this.setMachineStatusValue();
+        this.setMachineStatusValue(MachineStatus.OFF);
 
-        // establish notification utility
+        // establish notification utility & follow-up timer
         this.notifications = new NotificationUtil();
+        this.followupNotificationTimer = 0;
 
         // establish data processing utility
         this.dataproc = new DataProcessingUtil();
@@ -86,8 +88,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                         // Do stuff to update UI here
                         MachineStatus newStatus = determineMachineStatus(dataproc.getMachineStarted());
                         Log.i("Troubleshooting", "machine status: " + newStatus);
-                        setMachineStatus(newStatus);
-                        setMachineStatusValue();
+                        setMachineStatusValue(newStatus);
                     }
                 });
             }
@@ -153,11 +154,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         // retrieve the Bluetooth device
         final BluetoothManager btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         final BluetoothDevice remoteDevice = btManager.getAdapter().getRemoteDevice(macAddr);
-        Log.i("AppLog", "Remote Device: " + remoteDevice);
 
         // create the MetaWear board object
         this.board = serviceBinder.getMetaWearBoard(remoteDevice);
-        Log.i("AppLog", "Board: " + this.board);
 
         // connect to the board over bluetooth
         this.board.connectAsync().onSuccessTask(new Continuation<Void, Task<Route>>() {
@@ -168,14 +167,14 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
                 // configure the accelerometer and connect
                 accelerometer = board.getModule(Accelerometer.class);
-                accelerometer.configure().odr(15f).commit();
+                accelerometer.configure().odr(25f).commit();
                 return accelerometer.acceleration().addRouteAsync(new RouteBuilder() {
                     @Override
                     public void configure(RouteComponent source) {
                         source.stream(new Subscriber() {
                             @Override
                             public void apply(Data data, Object... env) {
-                                // Do what I need to with the data here
+                                // Process the data each time a point is received
                                 dataproc.processData(data);
                             }
                         });
@@ -195,7 +194,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                     accelerometer.start();
                     Log.i("AppLog", "Accelerometer started");
                 }
-
                 return null;
             }
         });
@@ -211,24 +209,21 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
             case R.id.statusOff_button:
                 // change the status to OFF
                 Log.i("AppLog", "Changing status to OFF");
-                this.setMachineStatus(MachineStatus.OFF);
-                this.setMachineStatusValue();
+                this.setMachineStatusValue(MachineStatus.OFF);
                 accelerometer.stop();
                 accelerometer.acceleration().stop();
                 break;
             case R.id.statusRunning_button:
                 // change the status to running
                 Log.i("AppLog", "Changing status to RUNNING");
-                this.setMachineStatus(MachineStatus.RUNNING);
-                this.setMachineStatusValue();
+                this.setMachineStatusValue(MachineStatus.RUNNING);
                 accelerometer.acceleration().start();
                 accelerometer.start();
                 break;
             case R.id.statusFinished_button:
                 // change the status to finished
                 Log.i("AppLog", "Changing status to FINISHED");
-                this.setMachineStatus(MachineStatus.FINISHED);
-                this.setMachineStatusValue();
+                this.setMachineStatusValue(MachineStatus.FINISHED);
                 try {
                     this.notifications.get();
                 } catch (Exception e) {
@@ -242,7 +237,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         }
     }
 
-    // Disconnects from the Metawear board
+    /*
+        Disconnects the app from the Metawear board and turns off the accelerometer
+     */
     private void disconnectBoard(String macAddr) {
         accelerometer.stop();
         accelerometer.acceleration().stop();
@@ -256,39 +253,55 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         });
     }
 
-    // Updates the machineStatus variable with the passed status
-    private void setMachineStatus(MachineStatus status) {
+    /*
+        Sets the machine status variable to the new value and updates the screen to reflect that
+        variable
+     */
+    private void setMachineStatusValue(MachineStatus status) {
         this.machineStatus = status;
         Log.i("AppLog", "New Machine Status: " + this.machineStatus);
-    }
-
-    // Updates the statusValue text view with the current value of the machineStatus variable
-    private void setMachineStatusValue() {
         TextView statusText = (TextView)findViewById(R.id.statusValue);
         statusText.setText(this.machineStatus.getStringID());
     }
 
+    /*
+        This method determines the current machine status based on the existing status and
+        the feedback from the data processing utility.
+        Returns the new status that is determined (or the existing status if nothing changed)
+     */
     private MachineStatus determineMachineStatus(Boolean machineRunning) {
         MachineStatus currStatus = this.machineStatus;
         if (currStatus == MachineStatus.OFF && machineRunning) {
-            return this.getNextStatus(this.machineStatus);
+            // Machine was off, but now is running; switch to running
+            return MachineStatus.RUNNING;
         } else if (currStatus == MachineStatus.RUNNING && !machineRunning) {
-            return this.getNextStatus(this.machineStatus);
-        } else {
+            // Machine was running, but now is not; send notification and switch to finished
+            try {
+                this.notifications.get();
+            } catch (Exception e) {
+                Log.w("AppLog", "Unable to send notification: " + e);
+            }
+            return MachineStatus.FINISHED;
+        } else if (currStatus == MachineStatus.FINISHED && !machineRunning) {
+            // Machine is finished and still needs to be unloaded; increase follow-up timer
+            this.followupNotificationTimer += 1;
+            if (this.followupNotificationTimer == 60) {
+                // it has been 60 minutes since the machine stopped, send a follow-up notification
+                try {
+                    this.notifications.get();
+                } catch (Exception e) {
+                    Log.w("AppLog", "Unable to send notification: " + e);
+                }
+            }
+            // return current status because nothing has changed
             return this.machineStatus;
-        }
-    }
-
-    private MachineStatus getNextStatus(MachineStatus currStatus) {
-        switch (currStatus) {
-            case OFF:
-                return MachineStatus.RUNNING;
-            case RUNNING:
-                return MachineStatus.FINISHED;
-            case FINISHED:
-                return MachineStatus.OFF;
-            default:
-                return MachineStatus.OFF;
+        } else if (currStatus == MachineStatus.FINISHED && machineRunning){
+            // machine has been unloaded.  Switch to off and reset followup timer
+            this.followupNotificationTimer = 0;
+            return MachineStatus.OFF;
+        } else {
+            // if anything else happens (i.e. nothing changed) return the current status
+            return this.machineStatus;
         }
     }
 }
