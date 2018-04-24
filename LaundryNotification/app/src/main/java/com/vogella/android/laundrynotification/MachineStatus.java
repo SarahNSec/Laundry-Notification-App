@@ -1,7 +1,7 @@
 package com.vogella.android.laundrynotification;
 
 /**
- * Created by sarah on 4/1/2018.
+ * Class defines the possible states that the machine can be in
  */
 
 public enum MachineStatus {
