@@ -14,10 +14,9 @@
 
         <service android:name="com.mbientlab.metawear.android.BtleService" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name="com.vogella.android.laundrynotification.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

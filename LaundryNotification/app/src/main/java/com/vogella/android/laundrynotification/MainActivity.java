@@ -12,10 +12,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,9 +27,6 @@ import com.mbientlab.metawear.builder.RouteComponent;
 import com.mbientlab.metawear.data.Acceleration;
 import com.mbientlab.metawear.module.Accelerometer;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -111,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 // User selected the settings menu item
                 // TODO: Open the settings UI
                 Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
-                return true;
             default:
                 // The users action was not recognized so call super class
                 return super.onOptionsItemSelected(item);
@@ -120,10 +114,15 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     @Override
     public void onDestroy() {
+        Log.i("AppLog", "On destroy called");
         super.onDestroy();
+        Log.i("AppLog", "Super.onDestroy called");
+        this.disconnectBoard(this.MW_MAC_ADDRESS);
+        Log.i("AppLog", "Disconnect board called");
 
         // Unbind the Metawear Btle service when the activity is destroyed
         getApplicationContext().unbindService(this);
+        Log.i("AppLog", "After service destroyed");
     }
 
     @Override
@@ -140,7 +139,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     @Override
     public void onServiceDisconnected(ComponentName name) {
         // Disconnect from the board
+        Log.i("AppLog", "On service disconnected called");
         this.disconnectBoard(this.MW_MAC_ADDRESS);
+        Log.i("AppLog", "Disconnect board called successfully");
     }
 
     /**
