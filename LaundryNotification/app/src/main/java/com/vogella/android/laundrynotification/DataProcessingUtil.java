@@ -43,6 +43,7 @@ public class DataProcessingUtil {
             }
         }
 
+        Log.i("AppLog", data.value(Acceleration.class).toString());
         double x_value = data.value(Acceleration.class).x();
         double y_value = data.value(Acceleration.class).y();
         double z_value = data.value(Acceleration.class).z();

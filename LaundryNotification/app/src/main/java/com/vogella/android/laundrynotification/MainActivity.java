@@ -29,6 +29,7 @@ import com.mbientlab.metawear.module.Accelerometer;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import bolts.Continuation;
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         Log.i("AppLog", "Disconnect board called");
 
         // Unbind the Metawear Btle service when the activity is destroyed
-        getApplicationContext().unbindService(this);
+        //getApplicationContext().unbindService(this);
         Log.i("AppLog", "After service destroyed");
     }
 
