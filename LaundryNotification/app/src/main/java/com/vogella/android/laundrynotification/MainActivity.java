@@ -210,44 +210,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }
 
     /**
-     * Function that is called when one of the buttons for changing status is called.
-     * This will be transitioned once the data is driving the status change.
-     * @param view
-     */
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.statusOff_button:
-                // change the status to OFF
-                Log.i("AppLog", "Changing status to OFF");
-                this.setMachineStatusValue(MachineStatus.OFF);
-                accelerometer.stop();
-                accelerometer.acceleration().stop();
-                break;
-            case R.id.statusRunning_button:
-                // change the status to running
-                Log.i("AppLog", "Changing status to RUNNING");
-                this.setMachineStatusValue(MachineStatus.RUNNING);
-                accelerometer.acceleration().start();
-                accelerometer.start();
-                break;
-            case R.id.statusFinished_button:
-                // change the status to finished
-                Log.i("AppLog", "Changing status to FINISHED");
-                this.setMachineStatusValue(MachineStatus.FINISHED);
-                try {
-                    this.notifications.get();
-                } catch (Exception e) {
-                    Log.w("AppLog", "ERROR_MAIN_THREAD");
-                }
-                break;
-            default:
-                // do nothing
-                Log.i("AppLog", "ERROR: did not recognize action");
-                break;
-        }
-    }
-
-    /**
      *  Disconnects the app from the Metawear board and turns off the accelerometer
      */
     private void disconnectBoard(String macAddr) {

@@ -13,6 +13,4 @@
     <string name="static_off">Turn off Accelerometer</string>
     <string name="static_offButtonText">WARNING: turn off the accelerometer using this button prior to closing the app.  If you do not, the MetaWear board may not connect correctly the next time you run the app.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
