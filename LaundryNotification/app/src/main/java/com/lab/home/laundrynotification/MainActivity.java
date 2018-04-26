@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -101,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 setMachineStatusValue(MachineStatus.UNKNOWN);
             }
         });
+
+        // load default values for settings
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     }
 
     @Override
