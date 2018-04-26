@@ -4,6 +4,7 @@
     <string name="status_value_off">Machine Off</string>
     <string name="status_value_running">Machine Running</string>
     <string name="status_value_finished">Machine Finished - Ready to Unload!</string>
+    <string name="status_unknown">Unknown - Accelerometer disconnected</string>
 
     <string name="static_status">Status:</string>
     <string name="static_settings">Settings</string>

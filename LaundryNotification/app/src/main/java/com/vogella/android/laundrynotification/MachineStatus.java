@@ -7,7 +7,8 @@ package com.vogella.android.laundrynotification;
 public enum MachineStatus {
     OFF(R.string.status_value_off),
     RUNNING(R.string.status_value_running),
-    FINISHED(R.string.status_value_finished);
+    FINISHED(R.string.status_value_finished),
+    UNKNOWN(R.string.status_unknown);
 
     private int string_id;
 

@@ -91,6 +91,16 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 });
             }
         },0, 60, TimeUnit.SECONDS);
+
+        // add on-click listener for accelerometer off button
+        findViewById(R.id.accelOff_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                accelerometer.stop();
+                accelerometer.acceleration().stop();
+                setMachineStatusValue(MachineStatus.UNKNOWN);
+            }
+        });
     }
 
     @Override
