@@ -1,4 +1,4 @@
-package com.vogella.android.laundrynotification;
+package com.lab.home.laundrynotification;
 
 import android.util.Log;
 

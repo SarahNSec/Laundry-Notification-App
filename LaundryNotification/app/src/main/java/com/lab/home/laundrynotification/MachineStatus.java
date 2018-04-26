@@ -1,4 +1,4 @@
-package com.vogella.android.laundrynotification;
+package com.lab.home.laundrynotification;
 
 /**
  * Class defines the possible states that the machine can be in
