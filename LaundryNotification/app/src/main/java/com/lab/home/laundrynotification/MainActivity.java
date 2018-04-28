@@ -4,10 +4,13 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -42,8 +45,9 @@ import bolts.Task;
  */
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
     private BtleService.LocalBinder serviceBinder;
-    private final String MW_MAC_ADDRESS= "F7:02:E6:49:04:AF";
+    //private final String MW_MAC_ADDRESS= "F7:02:E6:49:04:AF";
     //private final String MW_MAC_ADDRESS= "C7:CF:3D:0E:D9:0E";
+    private String MW_MAC_ADDRESS;
     private MetaWearBoard board;
     private MachineStatus machineStatus;
     private NotificationUtil notifications;
@@ -105,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
         // load default values for settings
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        this.MW_MAC_ADDRESS = sharedPref.getString(SettingsActivity.MW_MAC_ADDRESS, "00:00:00:00:00");
     }
 
     @Override
@@ -139,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         Log.i("AppLog", "Disconnect board called");
 
         // Unbind the Metawear Btle service when the activity is destroyed
-        //getApplicationContext().unbindService(this);
+        getApplicationContext().unbindService(this);
         Log.i("AppLog", "After service destroyed");
     }
 
@@ -150,8 +157,35 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
         Log.i("AppLog", "Service Connected");
 
-        this.retrieveBoard(this.MW_MAC_ADDRESS);
-
+        // Try to connect to the board.  If unsuccessful, prompt user for a valid MAC Address
+        try {
+            this.retrieveBoard(this.MW_MAC_ADDRESS);
+        } catch (IllegalArgumentException e){
+            Log.i("AppLog", "Error connecting to board: " + e);
+            // create the alert object
+            AlertDialog.Builder macAddrAlert = new AlertDialog.Builder(MainActivity.this);
+            // update the title and body
+            macAddrAlert.setTitle(R.string.alert_macAddr_title);
+            macAddrAlert.setMessage(R.string.alert_macAddr_msg);
+            // add "go to settings" and "Exit app" buttons
+            macAddrAlert.setPositiveButton(R.string.alert_macAddr_posButton, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // take the user to settings
+                    Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                    startActivity(intent);
+                }
+            });
+            macAddrAlert.setNegativeButton(R.string.alert_macAddr_negButton, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // exit the app
+                    finishAndRemoveTask();
+                }
+            });
+            // show the alert
+            macAddrAlert.show();
+        }
     }
 
     @Override

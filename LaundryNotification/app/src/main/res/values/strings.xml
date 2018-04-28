@@ -20,6 +20,11 @@
     <string name="static_macAddr">MAC Address</string>
     <string name="static_sensorConfig">Sensor Configuration</string>
 
+    <string name="alert_macAddr_title">Set MAC Address</string>
+    <string name="alert_macAddr_msg">This app requires entering a valid MAC address for a MetaWear sensor.  Please click below to update the MAC address.</string>
+    <string name="alert_macAddr_posButton">Go to Settings</string>
+    <string name="alert_macAddr_negButton">Exit App</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
