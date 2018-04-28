@@ -18,7 +18,6 @@ import okhttp3.Response;
  *  to create notifications.
  */
 public class NotificationUtil {
-    private String iftttAPIKey = "dgVbFkX8p2zJKoMUx3Czyh";
     private static final String KEY_API_KEY_1 = "preference_apiKey1";
     private static final String KEY_API_KEY_2 = "preference_apiKey2";
     private static final String KEY_API_KEY_3 = "preference_apiKey3";
