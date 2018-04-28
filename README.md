@@ -58,3 +58,17 @@ Up to three API keys can be entered in the app to support sending notifications 
 Attach the MetaWear sensor to the lid of the washing machine.  For best results, place the sensor near the side of the lid that opens.
 
 In addition, the sensor has a MAC address associated with it.  Note the MAC address as this will be entered into the app in order to connect to the sensor via Bluetooth.
+
+## Getting Started
+
+With the Android device located in close enough proximity to the MetaWear sensor to connect via Bluetooth, launch the LaundryNotification app.
+
+The first time the app is launched, a notification will pop up indicating that the app requires a valid MAC address to connect to the MetaWear sensor.  Click `Go to Settings`.
+
+In the Settings interface, Click `MAC Address` and enter the MAC address of the MetaWear sensor.  Click any of the API Key entries to enter an IFTTT API key to send notifications.  A notification will be sent to each user with an API key.  Click the back button to return to the app.
+
+On the main app page, the machine status is displayed.  This status may take up to 10 minutes to update within the app.
+
+Simply keep the app running (even in the background) and it will monitor the status of your machine and notify you when your laundry is complete and needs to be unloaded.
+
+**Important Note:** to ensure that the app properly connects to the MetaWear sensor each time you run it, you must click the `TURN OFF ACCELEROMETER` button at the bottom of the page prior to killing the app.  If you start the app and the sensor will not properly connect (you get a notice about requiring a valid MAC address), kill the app and restart it.
