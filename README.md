@@ -45,10 +45,10 @@ First, a webhook to send notifications must be created in IFTTT.
     * Configure the notification method you choose to contain a message indicating that the laundry machine has finished and needs to be unloaded.
   * Once the configuration is complete, save the applet.
 
-  Next, the API key needs to be retrieved.
+Next, the API key needs to be retrieved.
 
-  * Go to https://ifttt.com/services/maker_webhooks/settings.
-  * Under `Account Info`, you will see a URL field.
-  * Note the API key value at the end of the URL after `https://maker.ifttt.com/use/`.  This value will be entered into the app to send notifications.
+* Go to https://ifttt.com/services/maker_webhooks/settings.
+* Under `Account Info`, you will see a URL field.
+* Note the API key value at the end of the URL after `https://maker.ifttt.com/use/`.  This value will be entered into the app to send notifications.
 
-  Up to three API keys can be entered in the app to support sending notifications to multiple people.
+Up to three API keys can be entered in the app to support sending notifications to multiple people.
