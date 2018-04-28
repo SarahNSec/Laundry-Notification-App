@@ -69,6 +69,12 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         // establish notification utility & follow-up timer
         this.notifications = new NotificationUtil();
         this.followupNotificationTimer = 0;
+        // FOR TESTING - REMOVE
+        try {
+            this.notifications.get(this);
+        } catch (Exception e) {
+            Log.w("AppLog", "Unable to send notification: " + e);
+        }
 
         // establish data processing utility
         this.dataproc = new DataProcessingUtil();
@@ -110,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         // load default values for settings
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
+        // Get MAC Address value from settings
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         this.MW_MAC_ADDRESS = sharedPref.getString(SettingsActivity.MW_MAC_ADDRESS, "00:00:00:00:00");
     }
@@ -307,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         } else if (currStatus == MachineStatus.RUNNING && !machineRunning) {
             // Machine was running, but now is not; send notification and switch to finished
             try {
-                this.notifications.get();
+                this.notifications.get(this);
             } catch (Exception e) {
                 Log.w("AppLog", "Unable to send notification: " + e);
             }
@@ -318,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
             if (this.followupNotificationTimer == 60) {
                 // it has been 60 minutes since the machine stopped, send a follow-up notification
                 try {
-                    this.notifications.get();
+                    this.notifications.get(this);
                 } catch (Exception e) {
                     Log.w("AppLog", "Unable to send notification: " + e);
                 }
