@@ -126,8 +126,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         switch (item.getItemId()) {
             case R.id.menuItem_settings:
                 // User selected the settings menu item
-                // TODO: Open the settings UI
-                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
