@@ -1,9 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.preference.SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="example_switch"
-        android:title="Settings Option"
-        android:summary="Turn this option on or off"/>
+    <android.support.v7.preference.PreferenceCategory android:title="@string/static_apiKeys">
+
+        <android.support.v7.preference.EditTextPreference
+            android:defaultValue=""
+            android:key="preference_apiKey1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/static_apiKey1" />
+        <android.support.v7.preference.EditTextPreference
+            android:defaultValue=""
+            android:key="preference_apiKey2"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/static_apiKey2" />
+        <android.support.v7.preference.EditTextPreference
+            android:defaultValue=""
+            android:key="preference_apiKey3"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/static_apiKey3" />
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory android:title="@string/static_sensorConfig">
+
+        <android.support.v7.preference.EditTextPreference
+            android:defaultValue=""
+            android:key="preference_macAddr"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/static_macAddr" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
 </android.support.v7.preference.PreferenceScreen>
