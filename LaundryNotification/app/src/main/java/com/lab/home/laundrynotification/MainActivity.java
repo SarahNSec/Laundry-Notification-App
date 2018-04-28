@@ -115,6 +115,14 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (this.board == null) {
+            this.attemptBoardConnection(this.MW_MAC_ADDRESS);
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -156,8 +164,25 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         Log.i("AppLog", "Service Connected");
 
         // Try to connect to the board.  If unsuccessful, prompt user for a valid MAC Address
+        this.attemptBoardConnection(this.MW_MAC_ADDRESS);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        // Disconnect from the board
+        Log.i("AppLog", "On service disconnected called");
+        this.disconnectBoard(this.MW_MAC_ADDRESS);
+        Log.i("AppLog", "Disconnect board called successfully");
+    }
+
+    /**
+     * Attempt to connect to the metawear board.  If unable to, prompt user to
+     * enter a valid MAC address
+     */
+    private void attemptBoardConnection(String macAddr) {
+        // Try to connect to the board.  If unsuccessful, prompt user for a valid MAC Address
         try {
-            this.retrieveBoard(this.MW_MAC_ADDRESS);
+            this.retrieveBoard(macAddr);
         } catch (IllegalArgumentException e){
             Log.i("AppLog", "Error connecting to board: " + e);
             // create the alert object
@@ -184,14 +209,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
             // show the alert
             macAddrAlert.show();
         }
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-        // Disconnect from the board
-        Log.i("AppLog", "On service disconnected called");
-        this.disconnectBoard(this.MW_MAC_ADDRESS);
-        Log.i("AppLog", "Disconnect board called successfully");
     }
 
     /**
