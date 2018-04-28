@@ -52,3 +52,9 @@ Next, the API key needs to be retrieved.
 * Note the API key value at the end of the URL after `https://maker.ifttt.com/use/`.  This value will be entered into the app to send notifications.
 
 Up to three API keys can be entered in the app to support sending notifications to multiple people.
+
+#### Sensor Setup
+
+Attach the MetaWear sensor to the lid of the washing machine.  For best results, place the sensor near the side of the lid that opens.
+
+In addition, the sensor has a MAC address associated with it.  Note the MAC address as this will be entered into the app in order to connect to the sensor via Bluetooth.
