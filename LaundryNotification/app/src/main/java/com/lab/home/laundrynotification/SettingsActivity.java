@@ -8,7 +8,7 @@ import android.util.Log;
  *  An activity to display the settings fragment
  */
 public class SettingsActivity extends AppCompatActivity {
-    public static final String MW_MAC_ADDRESS = "00:00:00:00:00";
+    public static final String MW_MAC_ADDRESS = "preference_macAddr";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

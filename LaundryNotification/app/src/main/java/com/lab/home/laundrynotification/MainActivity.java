@@ -118,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     protected void onRestart() {
         super.onRestart();
         if (this.board == null) {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            this.MW_MAC_ADDRESS = sharedPref.getString(SettingsActivity.MW_MAC_ADDRESS, "00:00:00:00:00");
             this.attemptBoardConnection(this.MW_MAC_ADDRESS);
         }
     }
