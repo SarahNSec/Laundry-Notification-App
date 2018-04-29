@@ -69,6 +69,12 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         // establish notification utility & follow-up timer
         this.notifications = new NotificationUtil();
         this.followupNotificationTimer = 0;
+        // FOR TESTING - REMOVE
+        try {
+            this.notifications.get(this);
+        } catch (Exception e) {
+            Log.w("AppLog", "Unable to send notification: " + e);
+        }
 
         // establish data processing utility
         this.dataproc = new DataProcessingUtil();
@@ -113,18 +119,17 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         // Get MAC Address value from settings
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         this.MW_MAC_ADDRESS = sharedPref.getString(SettingsActivity.MW_MAC_ADDRESS, "00:00:00:00:00");
-        Log.i("AppLog", "MAC address set: " + this.MW_MAC_ADDRESS);
     }
 
-//    @Override
-////    protected void onRestart() {
-////        super.onRestart();
-////        if (this.board == null) {
-////            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-////            this.MW_MAC_ADDRESS = sharedPref.getString(SettingsActivity.MW_MAC_ADDRESS, "00:00:00:00:00");
-////            this.attemptBoardConnection(this.MW_MAC_ADDRESS);
-////        }
-////    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (this.board == null) {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            this.MW_MAC_ADDRESS = sharedPref.getString(SettingsActivity.MW_MAC_ADDRESS, "00:00:00:00:00");
+            this.attemptBoardConnection(this.MW_MAC_ADDRESS);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -168,8 +173,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         Log.i("AppLog", "Service Connected");
 
         // Try to connect to the board.  If unsuccessful, prompt user for a valid MAC Address
-        //this.attemptBoardConnection(this.MW_MAC_ADDRESS);
-        this.retrieveBoard(this.MW_MAC_ADDRESS);
+        this.attemptBoardConnection(this.MW_MAC_ADDRESS);
     }
 
     @Override
@@ -186,7 +190,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
      */
     private void attemptBoardConnection(String macAddr) {
         // Try to connect to the board.  If unsuccessful, prompt user for a valid MAC Address
-        Log.i("AppLog", "attemptBoardConnection called");
         try {
             this.retrieveBoard(macAddr);
         } catch (IllegalArgumentException e){
@@ -226,11 +229,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         // retrieve the Bluetooth device
         final BluetoothManager btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         final BluetoothDevice remoteDevice = btManager.getAdapter().getRemoteDevice(macAddr);
-        Log.i("AppLog", "Bluetooth started");
 
         // create the MetaWear board object
         this.board = serviceBinder.getMetaWearBoard(remoteDevice);
-        Log.i("AppLog", "board retrieved");
 
         // connect to the board over bluetooth
         this.board.connectAsync().onSuccessTask(new Continuation<Void, Task<Route>>() {
@@ -242,17 +243,13 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 // configure the accelerometer and connect
                 accelerometer = board.getModule(Accelerometer.class);
                 accelerometer.configure().odr(25f).commit();
-                Log.i("AppLog", "Accelerometer configured");
                 return accelerometer.acceleration().addRouteAsync(new RouteBuilder() {
                     @Override
                     public void configure(RouteComponent source) {
-                        Log.i("AppLog", "in configure method");
                         source.stream(new Subscriber() {
                             @Override
                             public void apply(Data data, Object... env) {
-                                Log.i("AppLog", "in apply method");
                                 // Process the data each time a point is received
-                                Log.i("AppLog", data.value(Acceleration.class).toString());
                                 dataproc.processData(data);
                             }
                         });

@@ -32,7 +32,6 @@ public class DataProcessingUtil {
 
     public void processData(Data data) {
         // process the data
-        Log.i("AppLog", "ProcessData method called");
         if (this.currentMinTimeStamp == 0) {
             this.currentMinTimeStamp = System.currentTimeMillis()/1000/60;
         } else {
@@ -61,7 +60,7 @@ public class DataProcessingUtil {
     }
 
     public void checkMachineStatus() {
-        Log.i("AppLog", this.frequencyCount.toString());
+        Log.i("Troubleshooting", this.frequencyCount.toString());
         if (this.currentMin >= 1) {
             // Stops running here.  I don't get any of the following Logs.
             if (this.frequencyCount.get(this.currentMin - 1) < 50) {
@@ -69,13 +68,13 @@ public class DataProcessingUtil {
             } else {
                 this.belowThresholdCount = 0;
             }
-            Log.i("AppLog", "Below Threshold: " + this.belowThresholdCount);
+            Log.i("Troubleshooting", "Below Threshold: " + this.belowThresholdCount);
             if (this.belowThresholdCount == 10) {
                 this.machineStarted = false;
-                Log.i("AppLog", "Machine not running");
+                Log.i("Troubleshooting", "Machine not running");
             } else {
                 this.machineStarted = true;
-                Log.i("AppLog", "Machine running");
+                Log.i("Troubleshooting", "Machine running");
             }
         }
     }
