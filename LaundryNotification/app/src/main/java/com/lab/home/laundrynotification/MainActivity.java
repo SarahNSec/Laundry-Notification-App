@@ -35,6 +35,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import bolts.Continuation;
 import bolts.Task;
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         // Get MAC Address value from settings
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         this.MW_MAC_ADDRESS = sharedPref.getString(SettingsActivity.MW_MAC_ADDRESS, "00:00:00:00:00");
+        this.MW_MAC_ADDRESS= "F7:02:E6:49:04:AF";
     }
 
     @Override
@@ -322,23 +324,25 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         } else if (currStatus == MachineStatus.FINISHED && !machineRunning) {
             // Machine is finished and still needs to be unloaded; increase follow-up timer
             this.followupNotificationTimer += 1;
-            if (this.followupNotificationTimer == 60) {
-                // it has been 60 minutes since the machine stopped, send a follow-up notification
+            if (this.followupNotificationTimer == 30) {
+                // it has been 30 minutes since the machine stopped, send a follow-up notification
                 try {
                     this.notifications.get(this);
                 } catch (Exception e) {
                     Log.w("AppLog", "Unable to send notification: " + e);
                 }
+                // reset the followup timer to 0 and start counting again.
+                this.followupNotificationTimer = 0;
             }
             // return current status because nothing has changed
-            return this.machineStatus;
+            return currStatus;
         } else if (currStatus == MachineStatus.FINISHED && machineRunning){
             // machine has been unloaded.  Switch to off and reset followup timer
             this.followupNotificationTimer = 0;
             return MachineStatus.OFF;
         } else {
             // if anything else happens (i.e. nothing changed) return the current status
-            return this.machineStatus;
+            return currStatus;
         }
     }
 }

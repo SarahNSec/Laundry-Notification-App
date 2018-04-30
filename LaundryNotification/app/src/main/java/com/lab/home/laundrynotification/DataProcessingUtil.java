@@ -72,6 +72,7 @@ public class DataProcessingUtil {
             if (this.belowThresholdCount == 10) {
                 this.machineStarted = false;
                 Log.i("Troubleshooting", "Machine not running");
+                this.belowThresholdCount -= 1;
             } else {
                 this.machineStarted = true;
                 Log.i("Troubleshooting", "Machine running");
