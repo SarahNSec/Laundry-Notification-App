@@ -28,7 +28,10 @@
 
     <string name="static_apiKeyIntro">Enter an API key below.  Click the button to save it securely to the Amazon Keystore.</string>
     <string name="static_save">Save</string>
-    <string name="static_apiViewHInt">Enter an If This Then That (IFTTT) API key here to configure notifications.</string>
+    <string name="static_descViewHint">Enter a description of the key below.</string>
+    <string name="static_apiViewHint">Enter an If This Then That (IFTTT) API key here to configure notifications.</string>
+    <string name="apiDesc">Description</string>
+    <string name="apiKey">Key</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
