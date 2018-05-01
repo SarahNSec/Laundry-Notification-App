@@ -114,13 +114,21 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
             }
         });
 
+        // add on-click listener for configure notifications button
+        findViewById(R.id.configureAPI_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), APIActivity.class);
+                startActivity(intent);
+            }
+        });
+
         // load default values for settings
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         // Get MAC Address value from settings
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         this.MW_MAC_ADDRESS = sharedPref.getString(SettingsActivity.MW_MAC_ADDRESS, "00:00:00:00:00");
-        this.MW_MAC_ADDRESS= "F7:02:E6:49:04:AF";
     }
 
     @Override

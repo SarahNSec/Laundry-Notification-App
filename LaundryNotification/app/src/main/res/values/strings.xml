@@ -12,6 +12,7 @@
     <string name="static_notifications_summary">Turn notifications on or off</string>
     <string name="static_off">Turn off Accelerometer</string>
     <string name="static_offButtonText">WARNING: turn off the accelerometer using this button prior to closing the app.  If you do not, the MetaWear board may not connect correctly the next time you run the app.</string>
+    <string name="configureAPI">Configure Notifications</string>
 
     <string name="static_apiKeys">API Keys</string>
     <string name="static_apiKey1">API Key 1</string>
