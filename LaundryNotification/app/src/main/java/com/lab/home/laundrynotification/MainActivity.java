@@ -70,12 +70,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         // establish notification utility & follow-up timer
         this.notifications = new NotificationUtil();
         this.followupNotificationTimer = 0;
-        // FOR TESTING - REMOVE
-        try {
-            this.notifications.get(this);
-        } catch (Exception e) {
-            Log.w("AppLog", "Unable to send notification: " + e);
-        }
 
         // establish data processing utility
         this.dataproc = new DataProcessingUtil();
