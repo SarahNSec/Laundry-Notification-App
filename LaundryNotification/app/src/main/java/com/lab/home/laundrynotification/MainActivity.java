@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     protected void onRestart() {
         super.onRestart();
         if (this.board == null) {
+            // If board hasn't been configured, attempt connection again.
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             this.MW_MAC_ADDRESS = sharedPref.getString(SettingsActivity.MW_MAC_ADDRESS, "00:00:00:00:00");
             this.attemptBoardConnection(this.MW_MAC_ADDRESS);
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
@@ -152,9 +153,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     public void onDestroy() {
         Log.i("AppLog", "On destroy called");
         super.onDestroy();
-        Log.i("AppLog", "Super.onDestroy called");
         this.disconnectBoard(this.MW_MAC_ADDRESS);
-        Log.i("AppLog", "Disconnect board called");
 
         // Unbind the Metawear Btle service when the activity is destroyed
         getApplicationContext().unbindService(this);
