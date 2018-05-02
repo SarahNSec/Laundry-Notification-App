@@ -114,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         // Get MAC Address value from settings
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         this.MW_MAC_ADDRESS = sharedPref.getString(SettingsActivity.MW_MAC_ADDRESS, "00:00:00:00:00");
-        this.MW_MAC_ADDRESS= "F7:02:E6:49:04:AF";
     }
 
     @Override
